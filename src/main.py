@@ -2,10 +2,12 @@ from math import ceil
 from pathlib import Path
 from typing import Literal
 
+import click
 import pandas
 from pandas import DataFrame
 from pandas.io.json._json import JsonReader
 from progress.bar import Bar
+from pyfs import isFile, resolvePath
 from sqlalchemy.exc import IntegrityError
 
 from src.db import DB
@@ -62,9 +64,44 @@ def toSQL(
         )
 
 
+@click.command()
+@click.option(
+    "-i",
+    "--input",
+    "inputPath",
+    help="Path to arXiv JSON Lines file",
+    type=Path,
+    required=True,
+)
+@click.option(
+    "-o",
+    "--output",
+    "outputPath",
+    help="Path to output SQLite3 database",
+    type=Path,
+    required=True,
+)
+@click.option(
+    "-c",
+    "--chunksize",
+    "chunkSize",
+    help="Number of rows to read from the JSON Lines file",
+    type=int,
+    default=10000,
+    show_default=True,
+)
 def main(inputPath: Path, outputPath: Path, chunkSize: int) -> None:
-    absInputPath: Path = inputPath
-    absOutputPath: Path = outputPath
+    absInputPath: Path = resolvePath(path=inputPath)
+    absOutputPath: Path = resolvePath(path=outputPath)
+
+    if not isFile(path=absInputPath):
+        raise FileNotFoundError(absInputPath)
+
+    if isFile(path=absOutputPath):
+        raise FileExistsError(absOutputPath)
+
+    if chunkSize < 1:
+        raise ValueError(chunkSize)
 
     uniqueIDs: set[str] = {}
     previousCategoriesDFMaxIndex: int = 0
@@ -128,8 +165,4 @@ def main(inputPath: Path, outputPath: Path, chunkSize: int) -> None:
 
 
 if __name__ == "__main__":
-    main(
-        inputPath=Path("../data/arxiv.jsonlines"),
-        outputPath=Path("../data/arxiv.db"),
-        chunkSize=10000,
-    )
+    main()

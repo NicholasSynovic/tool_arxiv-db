@@ -129,6 +129,20 @@ files = [
 ]
 
 [[package]]
+name = "click"
+version = "8.1.7"
+description = "Composable command line interface toolkit"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "click-8.1.7-py3-none-any.whl", hash = "sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28"},
+    {file = "click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"},
+]
+
+[package.dependencies]
+colorama = {version = "*", markers = "platform_system == \"Windows\""}
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 description = "Cross-platform colored terminal text."
@@ -379,6 +393,21 @@ files = [
 ]
 
 [[package]]
+name = "pyfs"
+version = "0.1.0"
+description = ""
+optional = false
+python-versions = "^3.10"
+files = []
+develop = false
+
+[package.source]
+type = "git"
+url = "https://github.com/NicholasSynovic/python-fs-utils"
+reference = "HEAD"
+resolved_reference = "2d030dcdd7d75d40eb603699454020116ae7be81"
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -622,5 +651,5 @@ files = [
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.9"
-content-hash = "392fcd4d140ddfc50c9439bc27b287a7f99935862b11792e502d14a4d458bed4"
+python-versions = ">=3.10,<4.0"
+content-hash = "818a17ca35c986fe5039c45d298bf6039285f35780a211ec0a3b0b5addf5b9d8"

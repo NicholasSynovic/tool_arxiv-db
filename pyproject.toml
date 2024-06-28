@@ -6,11 +6,13 @@ authors = ["Nicholas M. Synovic <nicholas.synovic@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = ">=3.10,<4.0"
 kaggle = "^1.6.14"
 pandas = "^2.2.2"
 progress = "^1.6"
 sqlalchemy = "^2.0.31"
+click = "^8.1.7"
+pyfs = {git = "https://github.com/NicholasSynovic/python-fs-utils"}
 
 [tool.black]
 line-length = 79
