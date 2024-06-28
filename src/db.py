@@ -4,6 +4,8 @@ from sqlalchemy import (
     Column,
     Date,
     Engine,
+    ForeignKeyConstraint,
+    Integer,
     MetaData,
     PrimaryKeyConstraint,
     String,
@@ -34,6 +36,19 @@ class DB:
             Column("abstract", String),
             Column("update_date", Date),
             PrimaryKeyConstraint("id"),
+        )
+
+        _: Table = Table(
+            "categories",
+            self.metadata,
+            Column("id", Integer),
+            Column("arxiv_id", String),
+            Column("category", String),
+            PrimaryKeyConstraint("id"),
+            ForeignKeyConstraint(
+                columns=["arxiv_id"],
+                refcolumns=["documents.id"],
+            ),
         )
 
         self.metadata.create_all(bind=self.engine, checkfirst=True)
