@@ -225,12 +225,6 @@ def main(inputPath: Path, outputPath: Path, chunkSize: int) -> None:
     :raises FileNotFoundError: If the input file does not exist.
     :raises FileExistsError: If the output file already exists.
     :raises ValueError: If the chunk size is less than 1.
-
-    Example usage:
-
-    >>> from pathlib import Path
-    >>> main(inputPath=Path('/path/to/input.json'),
-    ...     outputPath=Path('/path/to/output.db'), chunkSize=100)
     """
     absInputPath: Path = resolvePath(path=inputPath)
     absOutputPath: Path = resolvePath(path=outputPath)
