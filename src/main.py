@@ -230,7 +230,7 @@ def main(inputPath: Path, outputPath: Path, chunkSize: int) -> None:
 
     >>> from pathlib import Path
     >>> main(inputPath=Path('/path/to/input.json'),
-    >>>     outputPath=Path('/path/to/output.db'), chunkSize=100)
+    ...     outputPath=Path('/path/to/output.db'), chunkSize=100)
     """
     absInputPath: Path = resolvePath(path=inputPath)
     absOutputPath: Path = resolvePath(path=outputPath)
