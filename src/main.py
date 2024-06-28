@@ -14,15 +14,90 @@ from src.db import DB
 
 
 def countLines(filepath: Path) -> int:
+    """
+    Count the number of lines in a specified file.
+
+    This function opens a file in binary read mode and counts the lines
+    by iterating over each line. Using binary mode ('rb') to avoid
+    potential issues with newline characters across different platforms.
+
+    :param filepath: The path to the file for which to count the lines.
+    :type filepath: Path
+    :return: The number of lines in the file.
+    :rtype: int
+
+    Example usage:
+
+    >>> from pathlib import Path
+    >>> filepath = Path('/path/to/your/file.txt')
+    >>> countLines(filepath)
+    42
+    """
     print(f"Counting lines in {filepath} ...")
     return sum(1 for _ in open(file=filepath, mode="rb"))
 
 
 def computeIterations(chunkSize: int, lineCount: int) -> int:
+    """
+    Calculate the number of iterations required to process lines in
+    specified chunk sizes.
+
+    Given the total number of lines and the number of lines to be processed
+    per iteration (chunk size), this function computes how many iterations
+    will be necessary to process all lines.
+
+    :param chunkSize: The number of lines to process in each iteration.
+    :type chunkSize: int
+    :param lineCount: The total number of lines to be processed.
+    :type lineCount: int
+    :return: The number of iterations required to process all lines.
+    :rtype: int
+
+    Example usage:
+
+    >>> computeIterations(chunkSize=100, lineCount=450)
+    5
+    """
     return ceil(lineCount / chunkSize)
 
 
-def explodeColumn(df: DataFrame, indexColumn: str, column: str) -> DataFrame:
+def explodeColumn(
+    df: DataFrame,
+    indexColumn: str,
+    column: str,
+) -> DataFrame:
+    """
+    Explode a column in the DataFrame where each entry in the specified
+    column is split by space and then expanded into multiple rows.
+
+    This function sets a specified column as the index, splits
+    another specified column by spaces, explodes this column into multiple
+    rows for each element in the split lists, and then resets the index.
+
+    :param df: The DataFrame to process.
+    :type df: DataFrame
+    :param indexColumn: The name of the column to set as the index
+    before exploding.
+    :type indexColumn: str
+    :param column: The name of the column to explode.
+    :type column: str
+    :return: A new DataFrame with the specified column exploded into
+    multiple rows.
+    :rtype: DataFrame
+
+    Example usage:
+
+    >>> import pandas as pd
+    >>> data = {'id': [1, 2], 'text': ['hello world', 'test pandas']}
+    >>> df = pd.DataFrame(data)
+    >>> exploded_df = explodeColumn(df, 'id', 'text')
+    >>> print(exploded_df)
+       id     text
+    0   1    hello
+    1   1    world
+    2   2     test
+    3   2   pandas
+    """
     df.set_index(keys=indexColumn, inplace=True)
 
     df = (
@@ -40,6 +115,44 @@ def toSQL(
     db: DB,
     includeIndex: bool = False,
 ) -> None:
+    """
+    Append a DataFrame to a SQL table, handling duplicate primary key issues
+    by appending only new rows.
+
+    The function attempts to append the DataFrame to a specified SQL table.
+    If an IntegrityError occurs due to duplicate primary key entries,
+    it fetches the existing IDs from the table, filters out the duplicate
+    entries from the DataFrame, and attempts the append operation again.
+
+    :param table: The name of the SQL table to append to. Must be
+    'documents' or 'categories'.
+    :type table: Literal["documents", "categories"]
+    :param df: The DataFrame to append.
+    :type df: DataFrame
+    :param db: An object representing database configuration and connection.
+    It must have an 'engine' attribute.
+    :type db: DB
+    :param includeIndex: Whether to include the DataFrame's index as a
+    column in the SQL table. Defaults to False.
+    :type includeIndex: bool
+    :raises IntegrityError: Raised if the second append operation fails due
+    to duplicate keys.
+
+    Example usage:
+
+    >>> import pandas as pd
+    >>> from sqlalchemy import create_engine
+    >>> from sqlalchemy_utils import database_exists, create_database
+    >>> class DB:
+    ...     def __init__(self, url):
+    ...         self.engine = create_engine(url)
+    ...         if not database_exists(self.engine.url):
+    ...             create_database(self.engine.url)
+    >>> db = DB('sqlite:///example.db')
+    >>> data = {'id': [1, 2], 'text': ['sample1', 'sample2']}
+    >>> df = pd.DataFrame(data)
+    >>> toSQL('documents', df, db, includeIndex=False)
+    """
     try:
         df.to_sql(
             name=table,
@@ -91,6 +204,34 @@ def toSQL(
     show_default=True,
 )
 def main(inputPath: Path, outputPath: Path, chunkSize: int) -> None:
+    """
+    Process JSON data from an input file, transforming and loading it into
+    a SQL database in chunks.
+
+    This function takes a JSON file, reads it in chunks, processes each
+    chunk to extract relevant data, and appends it to the specified database.
+    It checks for the existence and validity of input and output paths,
+    and raises exceptions if issues are found. It also ensures all unique
+    IDs are processed only once and handles database writing through
+    specific table mappings.
+
+    :param inputPath: The file system path to the input JSON file.
+    :type inputPath: Path
+    :param outputPath: The file system path where the output database is
+    located.
+    :type outputPath: Path
+    :param chunkSize: The number of records to process in each chunk.
+    :type chunkSize: int
+    :raises FileNotFoundError: If the input file does not exist.
+    :raises FileExistsError: If the output file already exists.
+    :raises ValueError: If the chunk size is less than 1.
+
+    Example usage:
+
+    >>> from pathlib import Path
+    >>> main(inputPath=Path('/path/to/input.json'),
+        outputPath=Path('/path/to/output.db'), chunkSize=100)
+    """
     absInputPath: Path = resolvePath(path=inputPath)
     absOutputPath: Path = resolvePath(path=outputPath)
 
