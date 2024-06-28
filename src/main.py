@@ -10,7 +10,9 @@ def main(inputPath: Path, chunksize: int) -> None:
     absInputPath: Path = inputPath
 
     dfs: JsonReader[DataFrame] = pandas.read_json(
-        path_or_buf=absInputPath, lines=True, chunksize=chunksize
+        path_or_buf=absInputPath,
+        lines=True,
+        chunksize=chunksize,
     )
 
     with Spinner(message="Writing data to database...") as spinner:
@@ -21,4 +23,7 @@ def main(inputPath: Path, chunksize: int) -> None:
 
 
 if __name__ == "__main__":
-    main(inputPath=Path("../data/arxiv.jsonlines"), chunksize=10000)
+    main(
+        inputPath=Path("../data/arxiv.jsonlines"),
+        chunksize=10000,
+    )
