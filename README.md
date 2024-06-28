@@ -20,7 +20,7 @@ utilization.
 
 ## How to Install
 
-This code was tested to run on x86-64 Linux
+This code was tested to run on x86-64 Linux.
 
 ### Dependencies
 
@@ -30,7 +30,7 @@ This code was tested to run on x86-64 Linux
 
 ### Installation steps
 
-- Create the Python venv and install the tool
+- Create the `Python 3,10` virtual environment and install the tool:
 
 ```shell
 make create-dev
