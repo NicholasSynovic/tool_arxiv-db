@@ -16,7 +16,16 @@ def main(inputPath: Path, chunksize: int) -> None:
     )
 
     with Spinner(message="Writing data to database...") as spinner:
+        df: DataFrame
         for df in dfs:
+            # categoriesDF: DataFrame = df[["id", "categories"]]
+            # versionsDF: DataFrame = df[["id", "versions"]]
+            # authorsDF: DataFrame = df[["id", "authors_parsed"]]
+
+            df.drop(
+                columns=["categories", "versions", "authors_parsed"],
+                inplace=True,
+            )
             print(df.columns)
             spinner.next()
             break
