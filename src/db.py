@@ -5,6 +5,7 @@ from sqlalchemy import (
     Date,
     Engine,
     MetaData,
+    PrimaryKeyConstraint,
     String,
     Table,
     create_engine,
@@ -31,8 +32,8 @@ class DB:
             Column("report-no", String),
             Column("license", String),
             Column("abstract", String),
-            Column("versions", String),
             Column("update_date", Date),
+            PrimaryKeyConstraint("id"),
         )
 
         self.metadata.create_all(bind=self.engine, checkfirst=True)
